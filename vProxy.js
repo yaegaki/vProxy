@@ -10,8 +10,14 @@ var server = net.createServer(function(client){
 		if(headers[0]){
 			var temp = headers[0].split(' ');
 			var info = {};
-			var method = temp[0];
-			var address = url.parse(temp[1]);
+			var method = temp[0]
+			var address;
+			try{
+				var address = url.parse(temp[1]);
+			}catch(e)
+				console.log("invalid request");
+				client.end();{
+			}
 			if(!address.href.match(/^http:\/\/.+/)){
 				console.log("invalid request");
 				client.end();
