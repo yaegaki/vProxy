@@ -14,9 +14,9 @@ var server = net.createServer(function(client){
 			var address;
 			try{
 				var address = url.parse(temp[1]);
-			}catch(e)
+			}catch(e){
 				console.log("invalid request");
-				client.end();{
+				client.end();
 			}
 			if(!address.href.match(/^http:\/\/.+/)){
 				console.log("invalid request");
