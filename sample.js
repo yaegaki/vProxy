@@ -1,31 +1,22 @@
 var vp = require('./vProxy');
 
-//client to server
-vp.on('send', function (data, info, client){
-	console.log('connect to '+info.address.href);
-
-	//block yahoo
-	if(info.address.href.match(/yahoo/)){
-		console.log("blocked");
-		client.write("HTTP/1.1 200 OK\r\n\r\nThis page is blocked by vProxy.");
-		return null;
-	}
-	return data;
+vp.on('connect', function (url) {
+    console.log(url.href);
+    return true;
 });
 
-//server to client
-vp.on('recv', function(data, info, client){
-	console.log('recv from '+ info.address.href);
-	var response = vp.parseHTTP(data);
+vp.on('send', function (req, url, con) {
+    return req;
+});
 
-	//response modify
-	for(var i = 0;i < response.headers.length;i++){
-		if(response.headers[i].match(/text\/html/)){
-			var aybabtu = "<html><h1>All your base are belong to us.</h1></html>";
-			return vp.createHTTP(["HTTP/1.1 200 OK","Content-Length: 0"], aybabtu);
-		}
-	}
-	return data;
+vp.on('recv', function (res, url, con) {
+    for (var i in res.headers) {
+        console.log(res.headers[i]);
+        if (res.headers[i].match(/html/)) {
+            res.body = '<h1>All your base are belong to us.</h1>';
+        }
+    }
+    return res;
 });
 
 vp.start(8080);
